@@ -2,13 +2,18 @@ package hipchat
 
 import (
   "testing" 
+  "os"
 )
 
 func TestRooms(t *testing.T) {
-  tken := "12345"
+  tken := os.Getenv("TOKEN")
   hc := New(tken)
-  rooms := hc.getRooms()
-  if len(rooms) == 0 {
-    t.Error("Did not fetch rooms")
+  err := hc.getRooms()
+  if err != nil {
+    t.Error(err)
   }
+
+  //for _, item := range bar {
+    //fmt.Println(item.Name)
+  //}
 }
