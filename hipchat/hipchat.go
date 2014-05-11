@@ -87,11 +87,10 @@ func getContent(path string) ([]byte, error) {
 	return body, nil
 }
 
-func (h Hipchat) listRooms() (error) {
+func (h Hipchat) ListRooms() (error) {
 	var hf HipchatFeed
 	queryParams := fmt.Sprintf("auth_token=%s", h.token)
 	url := h.url + "/rooms/list?" + queryParams
-	fmt.Println(url)
 	content, err := getContent(url)
 	err = json.Unmarshal(content, &hf)
 	for _, item := range hf.Rooms {
@@ -103,18 +102,16 @@ func (h Hipchat) listRooms() (error) {
 	return nil
 }
 
-func (h Hipchat) messageRoom(room,message,from string) error {
+func (h Hipchat) MessageRoom(room,message,from string) (string, error) {
         var mr MessageResponse
 	queryParams := fmt.Sprintf("auth_token=%s", h.token)
 	url := h.url + "/rooms/message?" + queryParams
-	fmt.Println(url)
 	content, err := postMessage(url, room, message)
 	err = json.Unmarshal(content, &mr)
 
         if err !=nil {
-          return err
+          return "json marshall error", err
         }
 
-        fmt.Printf("%s\n", mr)
-        return nil
+        return mr.Status, nil
 }

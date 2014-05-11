@@ -8,7 +8,7 @@ import (
 func TestRooms(t *testing.T) {
   tken := os.Getenv("TOKEN")
   hc := New(tken)
-  err := hc.listRooms()
+  err := hc.ListRooms()
   if err != nil {
     t.Error(err)
   }
@@ -20,8 +20,12 @@ func TestRoomMessage(t *testing.T) {
   msg := "hello world!"
   room := "test"
   from := os.Getenv("USER")
-  err := hc.messageRoom(room, msg, from)
+  res, err := hc.MessageRoom(room, msg, from)
   if err !=nil {
     t.Error(err)
+  }
+
+  if res == "" {
+    t.Error("Expected sent, but got %v", res)
   }
 }
