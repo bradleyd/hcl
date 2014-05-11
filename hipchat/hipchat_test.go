@@ -8,12 +8,20 @@ import (
 func TestRooms(t *testing.T) {
   tken := os.Getenv("TOKEN")
   hc := New(tken)
-  err := hc.getRooms()
+  err := hc.listRooms()
   if err != nil {
     t.Error(err)
   }
+}
 
-  //for _, item := range bar {
-    //fmt.Println(item.Name)
-  //}
+func TestRoomMessage(t *testing.T) {
+  tken := os.Getenv("TOKEN")
+  hc := New(tken)
+  msg := "hello world!"
+  room := "test"
+  from := os.Getenv("USER")
+  err := hc.messageRoom(room, msg, from)
+  if err !=nil {
+    t.Error(err)
+  }
 }
