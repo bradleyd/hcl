@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
         "bytes"
-        "net/url"
 )
 
 type Room struct {
@@ -27,26 +26,41 @@ type HipchatFeed struct {
 type MessageResponse struct {
   Status string `json:"status"`
 }
-func New(token string) *Hipchat {
-	return &Hipchat{token, "https://api.hipchat.com/v1"}
-}
-func postMessage(path, room, message string) ([]byte, error) {
-        data := url.Values{}
-        data.Set("room_id", room)
-        data.Add("message", message)
-        data.Add("from", "hcl")
-        data.Add("notify", "1")
-        data.Add("color", "green")
 
-	req, err := http.NewRequest("POST", path, bytes.NewBufferString(data.Encode()))
+type MessagePayload struct {
+  Color string `json:"color"`
+  Message string `json:"message"`
+}
+
+func New(token string) *Hipchat {
+	return &Hipchat{token, "https://api.hipchat.com/v2"}
+}
+
+// post a message to a room
+// todo create messagePayload from config
+// takes POST url, room name, message, and auth token
+func postMessage(path, room, message, token string) (string, error) {
+        // create payload 
+        json_data := &MessagePayload {
+          Color: "green",
+          Message: message,
+        }
+        json_bytes, err := json.Marshal(json_data)
+        if nil != err {
+          return "JSON marshall error", err
+        }
+
+	req, err := http.NewRequest("POST", path, bytes.NewReader(json_bytes))
 	if err != nil {
 		fmt.Println("postMessage ERROR: ", err)
 	}
 
         // for v2 only
-        //authHeader := fmt.Sprintf("Bearer %s", token)
-        //req.Header.Add("Authentication", authHeader)
-        req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+        authHeader := fmt.Sprintf("Bearer %s", token)
+        req.Header.Add("Authorization", authHeader)
+        req.Header.Add("Accept", "application/json")
+        req.Header.Add("Content-Type", "application/json")
+
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -59,7 +73,8 @@ func postMessage(path, room, message string) ([]byte, error) {
 	if err != nil {
 		fmt.Println("Read body ERROR: ", err)
 	}
-	return body, nil
+        fmt.Println(body)
+	return resp.Status, nil
 }
 
 
@@ -103,15 +118,7 @@ func (h Hipchat) ListRooms() (error) {
 }
 
 func (h Hipchat) MessageRoom(room,message,from string) (string, error) {
-        var mr MessageResponse
-	queryParams := fmt.Sprintf("auth_token=%s", h.token)
-	url := h.url + "/rooms/message?" + queryParams
-	content, err := postMessage(url, room, message)
-	err = json.Unmarshal(content, &mr)
-
-        if err !=nil {
-          return "json marshall error", err
-        }
-
-        return mr.Status, nil
+	url := fmt.Sprintf("%s/room/%s/notification", h.url, room)
+	content, err := postMessage(url, room, message, h.token)
+        return content, err
 }

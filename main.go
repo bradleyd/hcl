@@ -37,7 +37,7 @@ func main() {
               os.Exit(1)
             }
 
-            if res != "" {
+            if res != "204" {
               println("Message sent")
             }else {
               println("RoomMessageError: ", res)
