@@ -3,7 +3,7 @@ package main
 import (
   "github.com/codegangsta/cli"
   "os"
-  "./hipchat"
+  "hipchat"
 )
 
 func main() {
