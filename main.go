@@ -2,13 +2,20 @@ package main
 
 import (
   "github.com/codegangsta/cli"
+  "fmt"
   "os"
+  "config"
   "hipchat"
 )
 
 func main() {
-  tken := os.Getenv("TOKEN")
-  hc := hipchat.New(tken)
+  cfg, err := config.Load()
+  if err !=nil {
+    fmt.Println("Config Error: ", err)
+    os.Exit(1)
+  }
+
+  hc := hipchat.New(cfg.ApiToken)
 
   app := cli.NewApp()
   app.Name = "hcl"

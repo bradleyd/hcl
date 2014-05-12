@@ -17,7 +17,12 @@ Send a message to a room
 
 ```go
 # send message hello world to room foo
-hcl room foo 'hello world'
+hcl room foo 'hello world' #=> Message sent
+```
+Or you can use short names
+```go
+# use short names
+hcl r m test 'hello world' #=> Message sent
 ``` 
 
 #### Users
