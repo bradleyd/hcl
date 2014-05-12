@@ -12,7 +12,7 @@ func TestConfigLoadsFile(t *testing.T) {
     t.Error(err)
   }
 
-  if config != "12345" {
+  if config.ApiToken != "12345" {
     t.Error("expected 12345, but got", config)
   }
 }

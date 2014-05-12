@@ -26,6 +26,6 @@ func TestRoomMessage(t *testing.T) {
   }
 
   if res == "" {
-    t.Error("Expected sent, but got %v", res)
+    t.Errorf("Expected sent, but got %v", res)
   }
 }

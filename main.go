@@ -11,6 +11,7 @@ func main() {
   hc := hipchat.New(tken)
 
   app := cli.NewApp()
+  app.Name = "hcl"
   app.Usage = "Hipchat command line application"
   app.Version = "0.0.1"
   app.Commands = []cli.Command{
@@ -22,6 +23,7 @@ func main() {
         {
           Name:  "message",
           Usage: "send a message to a room",
+          ShortName: "m",
           Action: func(c *cli.Context) {
             if len(c.Args()) < 2 {
               println("room name and message are required.")
